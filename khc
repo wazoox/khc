@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+
+
+use strict;
+use warnings;
+
+my $host = shift or usage();
+
+if ( is_ip($host) ) {
+	print "IP\n";
+	clean($host);
+	exit
+}
+
+my $addr = get_ip($host);
+
+if ( $addr ) {
+	clean($host);
+	clean($addr);
+	exit
+}
+
+die "host not found $host\n";
+
+sub usage {
+    print STDERR "$0 ip or name\n";
+    exit 1;
+}
+
+
+sub is_ip {
+	my $val = $_[0];
+	my ( $n1, $n2, $n3, $n4) = ( $val =~ /(\d+)\.(\d+)\.(\d+)\.(\d+)/ );
+	if ( $n1 and $n2 and $n3 and $n4 ) {
+		if ( $n1 <= 255 and $n2 <= 255 and $n3 <= 255 and $n4 <= 255 ) {
+			return 1
+		}
+	}
+	return	
+}
+
+sub clean {
+	my $val = $_[0];
+	
+	#`perl -pi -e "s/$val.*//g" ~/.ssh/known_hosts` #or warn "error $!"
+	`ssh-keygen -R $val` #or warn "error $!"
+}
+
+sub get_ip {
+	my $host = $_[0];
+	
+	my $resp=`host $host`;
+	my ( $ip ) = ($resp =~ /(\d+\.\d+\.\d+\.\d+)/ );
+	
+	return $ip
+}
