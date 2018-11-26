@@ -23,7 +23,7 @@ if ( $addr ) {
 die "host not found $host\n";
 
 sub usage {
-    print STDERR "$0 ip or name\n";
+    print STDERR "$0 ip or hostname\n";
     exit 1;
 }
 
@@ -42,7 +42,6 @@ sub is_ip {
 sub clean {
 	my $val = $_[0];
 	
-	#`perl -pi -e "s/$val.*//g" ~/.ssh/known_hosts` #or warn "error $!"
 	`ssh-keygen -R $val` #or warn "error $!"
 }
 
